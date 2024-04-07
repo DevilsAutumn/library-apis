@@ -32,7 +32,7 @@ async def list_students(country: str = None, age: int = None):
     # Build filter conditions based on query parameters
     filter_conditions = {}
     if country:
-        filter_conditions["address.country"] = country
+        filter_conditions["address.country"] = country.lower()
     if age is not None:
         filter_conditions["age"] = {"$gte": age}
 
