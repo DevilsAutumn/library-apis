@@ -53,7 +53,7 @@ async def retrieve_student(id: str):
     """
     Retrieves a particular student
     - arg
-    :id - id of a particluar student
+    :id - id of a particular student
     response body - Student
     """
     try:
@@ -62,22 +62,23 @@ async def retrieve_student(id: str):
 
         # Fetch student data from MongoDB based on the provided ID
         student_data = await student_collection.find_one({"_id": obj_id})
-
-        if student_data:
-            return Student(**student_data)
-        else:
-            raise HTTPException(status_code=404, detail="Student not found")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+    if student_data:
+        return Student(**student_data)
+    else:
+        raise HTTPException(status_code=404, detail="Student not found")
+    
 
 
 @router.patch("/{id}", response_model=None, status_code=204)
 async def update_student(id: str, student_put_data: Student):
     """
-    Updates a particlular student
+    Updates a particular student
 
     - arg
-    :id - id of a particlua student
+    :id - id of a particular student
     request body - Student
     response body - No content
     """
@@ -86,37 +87,37 @@ async def update_student(id: str, student_put_data: Student):
         obj_id = ObjectId(id)
 
         student_data = await student_collection.find_one({"_id": obj_id})
-
-        if student_data:
-            update_data = student_put_data.model_dump(exclude_unset=True)
-            await student_collection.update_one(
-                {"_id": obj_id},
-                {"$set": update_data}
-            )
-            return {}
-        else:
-            raise HTTPException(status_code=404, detail="Student not found")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+    if student_data:
+        update_data = student_put_data.model_dump(exclude_unset=True)
+        await student_collection.update_one(
+            {"_id": obj_id},
+            {"$set": update_data}
+        )
+        return {}
+    else:
+        raise HTTPException(status_code=404, detail="Student not found")
 
 
 @router.delete("/{id}", status_code=200)
 async def delete_student(id: str):
     """
-    Deletes a particlular student
+    Deletes a particular student
 
     - arg
-    :id - id of a particlua student
+    :id - id of a particular student
     """
     try:
         # Convert student_id string to ObjectId
         obj_id = ObjectId(id)
 
         result = await student_collection.delete_one({"_id": obj_id})
-
-        if result.deleted_count == 1:
-            return {}
-        else:
-            raise HTTPException(status_code=404, detail="Student not found")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+    if result.deleted_count == 1:
+        return {}
+    else:
+        raise HTTPException(status_code=404, detail="Student not found")
